@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Chapter 22 | The Next Heist</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:'Special Elite',cursive;
+}
+
+/* ===========================
+BACKGROUND
+=========================== */
+
+body{
+    background:
+    linear-gradient(rgba(0,0,0,.75),
+    rgba(0,0,0,.85)),
+    url("https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1950&q=80");
+
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+
+/* ===========================
+VAULT SCREEN
+=========================== */
+
+#vaultScreen{
+
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.92);
+
+    z-index:999;
+
+    transition:1.4s ease;
+}
+
+#vaultScreen.open{
+
+    transform:scale(.2);
+    opacity:0;
+    pointer-events:none;
+
+}
+
+/* Vault Door */
+
+.vault{
+
+    width:min(92%,520px);
+
+    background:#111;
+
+    border:12px solid #666;
+
+    border-radius:50%;
+
+    aspect-ratio:1;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:
+    0 0 60px #000,
+    inset 0 0 40px rgba(255,255,255,.05);
+
+    position:relative;
+
+}
+
+.vault::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:82%;
+    height:82%;
+
+    border:4px dashed #555;
+
+    border-radius:50%;
+
+}
+
+.vault::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:20px;
+    height:20px;
+
+    background:#888;
+
+    border-radius:50%;
+
+}
+
+/* ===========================
+LOCK PANEL
+=========================== */
+
+.panel{
+
+    width:70%;
+    text-align:center;
+    z-index:2;
+
+}
+
+.panel h1{
+
+    font-family:'Oswald',sans-serif;
+
+    color:#B71C1C;
+
+    font-size:2.3rem;
+
+    letter-spacing:4px;
+
+    margin-bottom:15px;
+
+}
+
+.panel p{
+
+    color:#ddd;
+
+    font-size:.9rem;
+
+    margin-bottom:20px;
+
+}
+
+input{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    outline:none;
+
+    background:#1b1b1b;
+
+    color:#fff;
+
+    border:2px solid #444;
+
+    text-align:center;
+
+    font-family:'Special Elite',cursive;
+
+    letter-spacing:2px;
+
+}
+
+button{
+
+    width:100%;
+
+    margin-top:18px;
+
+    padding:14px;
+
+    border:none;
+
+    cursor:pointer;
+
+    background:#B71C1C;
+
+    color:white;
+
+    font-family:'Oswald';
+
+    letter-spacing:3px;
+
+    font-size:1rem;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    background:#d52b2b;
+
+}
+
+#error{
+
+    color:#ff5050;
+
+    margin-top:18px;
+
+    min-height:24px;
+
+    font-size:.85rem;
+
+}
+
+/* ===========================
+MAIN CARD
+=========================== */
+
+#mainCard{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:30px;
+
+    opacity:0;
+
+    transform:translateY(50px);
+
+    transition:1.5s ease;
+
+}
+
+#mainCard.show{
+
+    opacity:1;
+
+    transform:translateY(0);
+
+}
+
+/* ===========================
+DOSSIER
+=========================== */
+
+.dossier{
+
+    position:relative;
+
+    width:min(920px,95%);
+
+    background:#e8ddc5;
+
+    padding:60px;
+
+    border-radius:8px;
+
+    border:10px solid #c5b18d;
+
+    box-shadow:0 0 60px rgba(0,0,0,.6);
+
+}
+
+.topSecret{
+
+    position:absolute;
+
+    top:25px;
+    left:35px;
+
+    color:#B71C1C;
+
+    border:4px solid #B71C1C;
+
+    padding:10px 18px;
+
+    transform:rotate(-14deg);
+
+    font-family:'Oswald';
+
+    font-size:1.4rem;
+
+    font-weight:bold;
+
+}
+
+.approved{
+
+    position:absolute;
+
+    right:35px;
+    top:40px;
+
+    color:#006400;
+
+    border:4px solid #006400;
+
+    padding:12px 20px;
+
+    transform:rotate(15deg);
+
+    font-family:'Oswald';
+
+    font-size:1rem;
+
+    font-weight:bold;
+
+}
+
+h2{
+
+    margin-top:80px;
+
+    text-align:center;
+
+    font-family:'Oswald';
+
+    font-size:3rem;
+
+    letter-spacing:4px;
+
+    color:#111;
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    margin:15px 0 35px;
+
+    color:#444;
+
+}
+
+.letter{
+
+    font-size:1.1rem;
+
+    line-height:2;
+
+    color:#222;
+
+}
+
+/* Placeholder */
+
+.placeholder{
+
+    margin-top:30px;
+
+    border-left:5px solid #B71C1C;
+
+    padding-left:20px;
+
+    font-style:italic;
+
+    color:#333;
+
+}
+
+/* Footer */
+
+.footer{
+
+    margin-top:50px;
+
+    text-align:right;
+
+    font-family:'Oswald';
+
+    letter-spacing:3px;
+
+    color:#B71C1C;
+
+}
+
+/* ===========================
+EURO RAIN
+=========================== */
+
+#moneyRain{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:998;
+
+}
+
+/* ===========================
+RESPONSIVE
+=========================== */
+
+@media(max-width:768px){
+
+.dossier{
+
+padding:35px;
+
+}
+
+h2{
+
+font-size:2rem;
+
+}
+
+.letter{
+
+font-size:.95rem;
+
+line-height:1.8;
+
+}
+
+.panel h1{
+
+font-size:1.8rem;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="moneyRain"></div>
+
+<!-- ======================
+VAULT SCREEN
+====================== -->
+
+<div id="vaultScreen">
+
+<div class="vault">
+
+<div class="panel">
+
+<h1>ROYAL MINT OF SPAIN</h1>
+
+<p>Enter Password</p>
+
+<input
+id="password"
+type="text"
+placeholder="Hello">
+
+<button id="unlockBtn">
+
+UNLOCK VAULT
+
+</button>
+
+<div id="error"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ======================
+MAIN CARD
+====================== -->
+
+<div id="mainCard">
+
+<div class="dossier">
+
+<div class="topSecret">
+
+Landbank Masterplan
+
+</div>
+
+<div class="approved">
+
+APPROVED BY<br>THE PROFESSOR
+
+</div>
+
+<h2>HAPPY 22ND BIRTHDAY!</h2>
+
+<p class="On your 22nd birthday">
+
+</p>
+
+<div class="letter">
+
+<br>
+
+<div class="placeholder"></div>
+
+<div class="footer">
+— Eul
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+    <source src="Vince.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+// ===============================
+// MONEY HEIST VAULT SYSTEM
+// ===============================
+
+const unlockBtn = document.getElementById("unlockBtn");
+const passwordInput = document.getElementById("password");
+const error = document.getElementById("error");
+
+const vault = document.getElementById("vaultScreen");
+const card = document.getElementById("mainCard");
+
+const music = document.getElementById("bgMusic");
+
+// Unlock function
+function unlockVault(){
+
+    const password = passwordInput.value
+        .trim()
+        .toUpperCase();
+
+    if(password === "TEDDY"){
+
+        error.innerHTML="";
+
+        // Play background music
+        music.volume = 0.45;
+
+        music.play().catch(()=>{});
+
+        // Open vault
+        vault.classList.add("open");
+
+        // Reveal dossier
+        setTimeout(()=>{
+
+            card.classList.add("show");
+
+        },700);
+
+        // Start euro rain
+        startMoneyRain();
+
+    }
+
+    else{
+
+        error.innerHTML=
+        "ACCESS DENIED. Arturo is panicking. Try again.";
+
+        passwordInput.value="";
+
+        passwordInput.focus();
+
+        vault.animate([
+
+            {transform:"translateX(-8px)"},
+            {transform:"translateX(8px)"},
+            {transform:"translateX(-8px)"},
+            {transform:"translateX(8px)"},
+            {transform:"translateX(0)"}
+
+        ],{
+
+            duration:450
+
+        });
+
+    }
+
+}
+
+// Button click
+unlockBtn.addEventListener("click",unlockVault);
+
+// Press Enter
+passwordInput.addEventListener("keydown",function(e){
+
+    if(e.key==="Enter"){
+
+        unlockVault();
+
+    }
+
+});
+
+// Focus automatically
+window.onload=function(){
+
+    passwordInput.focus();
+
+};
+
+// ===============================
+// TYPEWRITER EFFECT
+// ===============================
+
+const placeholder = document.querySelector(".placeholder");
+
+const message = `Happy Birthday, Vince!
+
+May you continue to live your life to the fullest and embrace every opportunity that comes your way. Never lose your loving, caring, and gentle heart—three of the many things I truly admire about you.
+
+I feel incredibly happy that I got to meet you in this lifetime—or should I say, when Hannah tied our strings? HAHAHAHA. Of all the people our paths could have crossed with, I'm grateful ours did.
+
+You know I'm not really the best at expressing my feelings, but somehow, I always find myself taking that extra step because I know you'll always listen with an open heart. Thank you for being someone I can be completely genuine with.
+
+I pray that wherever your busy schedule takes you, you always find reasons to smile, people who love you as genuinely as you love them, and the strength to keep chasing everything your heart dreams of.
+
+Welcome to the 22-year-old club! I hope this year brings you beautiful memories, answered prayers, and moments that remind you just how appreciated and loved you are.
+
+Bella Ciao~`;
+
+placeholder.innerHTML="";
+
+let index = 0;
+
+function typeWriter(){
+
+    if(!card.classList.contains("show")){
+
+        setTimeout(typeWriter,200);
+
+        return;
+
+    }
+
+    if(index < message.length){
+
+        placeholder.innerHTML += message.charAt(index);
+
+        index++;
+
+        setTimeout(typeWriter,28);
+
+    }else{
+
+        setTimeout(closeVaultSequence,4000);
+
+    }
+
+}
+
+typeWriter();
+
+// ===============================
+// CLOSE VAULT AFTER READING
+// ===============================
+
+function closeVaultSequence(){
+
+    card.style.transition = "1.5s ease";
+    card.style.opacity = "0";
+    card.style.transform = "translateY(40px)";
+
+    setTimeout(()=>{
+
+        vault.classList.remove("open");
+
+        document.querySelector(".panel h1").innerHTML =
+        "MISSION COMPLETE";
+
+        document.querySelector(".panel p").innerHTML =
+        "The letter has been secured.<br>The Royal Mint Vault is now locked again.";
+
+        passwordInput.style.display = "none";
+        unlockBtn.style.display = "none";
+
+    },1600);
+
+}
+
+// ===============================
+// DOSSIER PARALLAX
+// ===============================
+
+document.addEventListener("mousemove",(e)=>{
+
+    if(window.innerWidth<900) return;
+
+    const dossier=document.querySelector(".dossier");
+
+    const x=(e.clientX/window.innerWidth-.5)*8;
+
+    const y=(e.clientY/window.innerHeight-.5)*8;
+
+    dossier.style.transform=
+    `rotateX(${-y}deg) rotateY(${x}deg)`;
+
+});
+
+// Reset position
+document.addEventListener("mouseleave",()=>{
+
+    document.querySelector(".dossier").style.transform=
+    "rotateX(0deg) rotateY(0deg)";
+
+});
+
+// ===============================
+// EURO RAIN FUNCTION
+// (See you again)
+// ===============================
+
+function startMoneyRain(){
+
+    // Continue in Chapter 23
+
+}
+// =====================================
+// MONEY RAIN
+// =====================================
+
+function createBill() {
+
+    const bill = document.createElement("div");
+
+    bill.innerHTML = "🪙";
+
+    bill.style.position = "fixed";
+    bill.style.left = Math.random() * window.innerWidth + "px";
+    bill.style.top = "-60px";
+    bill.style.fontSize = (26 + Math.random() * 18) + "px";
+    bill.style.pointerEvents = "none";
+    bill.style.userSelect = "none";
+    bill.style.zIndex = "999";
+
+    bill.style.transform =
+        `rotate(${Math.random() * 360}deg)`;
+
+    const duration = 4000 + Math.random() * 4000;
+
+    document.getElementById("moneyRain").appendChild(bill);
+
+    let start = null;
+
+    function animate(timestamp) {
+
+        if (!start) start = timestamp;
+
+        const progress = timestamp - start;
+
+        const percent = progress / duration;
+
+        bill.style.top = percent * (window.innerHeight + 100) + "px";
+
+        bill.style.left =
+            parseFloat(bill.style.left) +
+            Math.sin(progress / 250) * 0.6 + "px";
+
+        bill.style.transform =
+            `rotate(${progress / 10}deg)`;
+
+        if (progress < duration) {
+
+            requestAnimationFrame(animate);
+
+        } else {
+
+            bill.remove();
+
+        }
+
+    }
+
+    requestAnimationFrame(animate);
+
+}
+
+function startMoneyRain() {
+
+    setInterval(createBill, 180);
+
+}
+
+// =====================================
+// SMALL DOSSIER GLOW EFFECT
+// =====================================
+
+setInterval(() => {
+
+    if (!card.classList.contains("show")) return;
+
+    const dossier = document.querySelector(".dossier");
+
+    dossier.style.boxShadow =
+        "0 0 80px rgba(183,28,28,.35)";
+
+    setTimeout(() => {
+
+        dossier.style.boxShadow =
+            "0 0 60px rgba(0,0,0,.6)";
+
+    }, 500);
+
+}, 3500);
+
+// =====================================
+// CURSOR GLOW
+// =====================================
+
+document.addEventListener("mousemove", e => {
+
+    document.body.style.backgroundPosition =
+        `${50 + (e.clientX / window.innerWidth - .5) * 2}% 
+         ${50 + (e.clientY / window.innerHeight - .5) * 2}%`;
+
+});
+
+// =====================================
+// END OF SCRIPT
+// =====================================
+
+</script>
+
+</body>
+</html>
